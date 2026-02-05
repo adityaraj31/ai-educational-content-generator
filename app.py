@@ -23,65 +23,84 @@ This application uses two AI agents to generate educational content:
 - **Automatic Refinement**: If content fails review, it's automatically improved
 """)
 
-# Sidebar for inputs
-st.sidebar.header("Configuration")
 
-# API Key input
-api_key = st.sidebar.text_input(
-    "Groq API Key",
-    type="password",
-    value=os.getenv("GROQ_API_KEY", ""),
-    help="Enter your Groq API key"
+# Minimalist CSS
+st.markdown(
+    """
+    <style>
+    .block-container { padding-top: 2rem; }
+    .stSidebar { background: #18181b; }
+    .stButton>button { background: #ef4444; color: white; border-radius: 6px; border: none; font-weight: 600; }
+    .stButton>button:hover { background: #dc2626; }
+    .stTextInput>div>input[type='password'] { letter-spacing: 0.2em; }
+    .stTextInput>div>input { border-radius: 6px; border: 1px solid #333; background: #23272f; color: #fff; }
+    .stNumberInput>div>input { border-radius: 6px; border: 1px solid #333; background: #23272f; color: #fff; }
+    .stTextInput label, .stNumberInput label { color: #fff; font-weight: 500; }
+    .stSidebar .stTextInput, .stSidebar .stNumberInput { margin-bottom: 1.2rem; }
+    .stSidebar .stButton { margin-top: 1.5rem; }
+    .stSidebar .stMarkdown { color: #a1a1aa; }
+    </style>
+    """,
+    unsafe_allow_html=True
 )
 
-st.sidebar.markdown("---")
-st.sidebar.header("Content Parameters")
+# Hide API key input if already set in env or session
+if 'api_key' not in st.session_state:
+    st.session_state.api_key = os.getenv("GROQ_API_KEY", "")
 
-# Grade selection
-grade = st.sidebar.number_input(
-    "Grade Level",
-    min_value=1,
-    max_value=12,
-    value=4,
-    help="Select the target grade level"
-)
+if not st.session_state.api_key:
+    api_key = st.sidebar.text_input(
+        "Groq API Key",
+        type="password",
+        value="",
+        help="Enter your Groq API key"
+    )
+    if api_key:
+        st.session_state.api_key = api_key
+        st.sidebar.success("API key saved. You can now generate content.")
+else:
+    api_key = st.session_state.api_key
 
-# Topic input
-topic = st.sidebar.text_input(
-    "Topic",
-    value="Types of angles",
-    help="Enter the educational topic"
-)
 
-# Generate button
-generate_button = st.sidebar.button("🚀 Generate Content", type="primary", use_container_width=True)
+
+# Minimalist sidebar: only show content params if API key is set
+if api_key:
+    grade = st.sidebar.number_input(
+        "Grade Level",
+        min_value=1,
+        max_value=12,
+        value=4,
+        help="Select the target grade level"
+    )
+    topic = st.sidebar.text_input(
+        "Topic",
+        value="Types of angles",
+        help="Enter the educational topic"
+    )
+    generate_button = st.sidebar.button("Generate Content", use_container_width=True)
+else:
+    grade = None
+    topic = None
+    generate_button = False
+
 
 # Main content area
-if generate_button:
-    if not api_key:
-        st.error("⚠️ Please provide a Groq API key in the sidebar.")
-    elif not topic:
+if generate_button and api_key:
+    if not topic:
         st.error("⚠️ Please enter a topic.")
     else:
         with st.spinner("🤖 AI Agents are working..."):
             try:
-                # Initialize pipeline
                 pipeline = ContentPipeline(api_key)
-                
-                # Generate content
                 result = pipeline.generate_content(grade, topic)
                 initial_content, initial_review, refined_content, refined_review = result
-                
-                # Store in session state
                 st.session_state.initial_content = initial_content
                 st.session_state.initial_review = initial_review
                 st.session_state.refined_content = refined_content
                 st.session_state.refined_review = refined_review
                 st.session_state.grade = grade
                 st.session_state.topic = topic
-                
                 st.success("✅ Content generated successfully!")
-                
             except Exception as e:
                 st.error(f"❌ Error: {str(e)}")
 
