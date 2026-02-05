@@ -2,7 +2,7 @@
 
 A multi-agent system that generates and reviews educational content using AI. Built with Groq LLMs, Python, and Streamlit.
 
-## 🎯 Features
+## Features
 
 - **Two AI Agents:**
   - **Generator Agent**: Creates grade-appropriate educational content with explanation and 3 MCQs
@@ -11,7 +11,7 @@ A multi-agent system that generates and reviews educational content using AI. Bu
 
 - **Interactive UI**: Clean Streamlit interface showing the complete agent pipeline
 
-## 🏗️ Architecture
+## Architecture
 
 ```
 User Input (Grade + Topic)
@@ -25,13 +25,13 @@ Reviewer Agent → Review (Pass/Fail + Feedback)
 Final Output
 ```
 
-## 📋 Requirements
+## Requirements
 
 - Python 3.13+
 - uv package manager
 - Groq API key
 
-## 🚀 Setup
+## Setup
 
 1. **Clone or navigate to the project directory**
 
@@ -64,7 +64,7 @@ Final Output
    streamlit run app.py
    ```
 
-## 📖 Usage
+## Usage
 
 1. Enter your Groq API key in the sidebar (or set it in `.env`)
 2. Select the grade level (1-12)
@@ -75,7 +75,7 @@ Final Output
    - Review feedback
    - Refined output (if needed)
 
-## 🏛️ Project Structure
+## Project Structure
 
 ```
 .
@@ -88,7 +88,7 @@ Final Output
 └── README.md              # This file
 ```
 
-## 🔧 Components
+## Components
 
 ### Generator Agent
 
@@ -113,7 +113,7 @@ Final Output
 - Handles refinement (max 1 pass)
 - Returns all intermediate results for transparency
 
-## 🎓 Example
+## Example
 
 **Input:**
 
